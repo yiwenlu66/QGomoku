@@ -22,6 +22,10 @@ public slots:
     void showCreateServerDialog();
     void showConnectServerDialog();
     void connected(QTcpSocket *);
+    void win(GomokuBoardWidget::Color);
+
+protected:
+    bool eventFilter(QObject *, QEvent *);
 
 private:
     Ui::Dialog *ui;
@@ -31,7 +35,7 @@ private:
     QTcpSocket *m_socket;
 
     GomokuBoardWidget::Color m_role;
-    bool m_isMyTurn;
+    bool m_isMyTurn = false;
     void switchTurn();
     void setTurnText();
 };

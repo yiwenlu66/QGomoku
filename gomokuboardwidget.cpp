@@ -110,7 +110,7 @@ void GomokuBoardWidget::paintEvent(QPaintEvent *)
             switch (m_data[index]) {
             case BLACK:
             case WHITE: {
-                Qt::GlobalColor color = (index == BLACK) ? Qt::black : Qt::white;
+                Qt::GlobalColor color = (m_data[index] == BLACK) ? Qt::black : Qt::white;
                 painter.setPen(color);
                 painter.setBrush(color);
                 painter.drawEllipse(m_latticePos[index], m_pieceRadius, m_pieceRadius);

@@ -54,7 +54,7 @@ public:
     bool isActive();
 
 signals:
-    void win(Color);
+    void win(GomokuBoardWidget::Color);
 
 protected:
     void paintEvent(QPaintEvent *event);
