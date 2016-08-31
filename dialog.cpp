@@ -153,13 +153,12 @@ void Dialog::readData()
             int winner;
             in >> winner;
             showWinMessage(static_cast<GomokuBoardWidget::Color>(winner));
-            return;
-        }
-        if (!std::strcmp(tag, TAG_BOARD)) {
+        } else if (!std::strcmp(tag, TAG_BOARD)) {
             in >> *m_board;
             m_board->update();
             switchTurn();
         }
+        delete[] tag;
     }
 }
 
