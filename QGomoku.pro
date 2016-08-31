@@ -14,10 +14,12 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         dialog.cpp \
-    dialpad.cpp
+    dialpad.cpp \
+    gomokuboardwidget.cpp
 
 HEADERS  += dialog.h \
-    dialpad.h
+    dialpad.h \
+    gomokuboardwidget.h
 
 FORMS    += dialog.ui \
     dialpad.ui

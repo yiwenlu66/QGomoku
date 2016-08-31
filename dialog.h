@@ -3,6 +3,8 @@
 
 #include <QDialog>
 
+#include "gomokuboardwidget.h"
+
 namespace Ui {
 class Dialog;
 }
@@ -17,6 +19,8 @@ public:
 
 private:
     Ui::Dialog *ui;
+
+    GomokuBoardWidget *m_board;
 };
 
 #endif // DIALOG_H
