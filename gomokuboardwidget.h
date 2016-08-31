@@ -22,6 +22,10 @@ public:
     static const int BOARD_SIZE = 15;
     static const QList<int> CRITICAL_INDICES;    // draw thick dots at these lattices
 
+    // serialization / deserialization
+    friend QDataStream &operator<<(QDataStream &, const GomokuBoardWidget &);
+    friend QDataStream &operator>>(QDataStream &, GomokuBoardWidget &);
+
     int heightForWidth(int width) const {
         return width;
     }
@@ -49,9 +53,10 @@ public:
      */
     void checkForChance(Color);
 
-    void clear();
-
     bool isActive();
+
+public slots:
+    void clear();
 
 signals:
     void win(GomokuBoardWidget::Color);

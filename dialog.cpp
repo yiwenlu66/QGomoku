@@ -1,6 +1,8 @@
 #include "dialog.h"
 #include "ui_dialog.h"
 
+#include <cstring>
+
 #include <QSizePolicy>
 #include <QEvent>
 #include <QMouseEvent>
@@ -9,6 +11,9 @@
 #include "gomokuboardwidget.h"
 #include "createserverdialog.h"
 #include "connectserverdialog.h"
+
+constexpr char const Dialog::TAG_WIN[];
+constexpr char const Dialog::TAG_BOARD[];
 
 Dialog::Dialog(QWidget *parent) :
     QDialog(parent),
@@ -45,6 +50,7 @@ void Dialog::connected(QTcpSocket *socket)
 {
     socket->setParent(this);
     m_socket = socket;
+    connect(m_socket, SIGNAL(readyRead()), this, SLOT(readData()));
     ui->pushButton_connect->setEnabled(false);
     ui->pushButton_create->setEnabled(false);
     ui->label_role->setText(tr("You take <b>%1</b>.")
@@ -76,7 +82,22 @@ bool Dialog::eventFilter(QObject *, QEvent *event)
             return false;
         }
         if (m_board->putPieceAtPos(m_role, mouseEvent->pos())) {
-            // TODO: switch turn and send data
+            switchTurn();
+
+            QByteArray data;
+            QDataStream out(&data, QIODevice::WriteOnly);
+            out << TAG_BOARD << *m_board;
+            writeData(data);
+
+            if (m_winner != -1) {
+                QByteArray data;
+                QDataStream out(&data, QIODevice::WriteOnly);
+                GomokuBoardWidget::Color color = static_cast<GomokuBoardWidget::Color>(m_winner);
+                out << TAG_WIN << static_cast<int>(color);
+                writeData(data);
+                showWinMessage(color);
+            }
+
             return true;
         }
     }
@@ -85,12 +106,77 @@ bool Dialog::eventFilter(QObject *, QEvent *event)
 
 void Dialog::win(GomokuBoardWidget::Color color)
 {
+    m_winner = static_cast<int>(color);
+}
+
+void Dialog::showWinMessage(GomokuBoardWidget::Color color)
+{
     if (color == m_role) {
         QMessageBox::information(this, tr("Congratulations!"), tr("You won!"), QMessageBox::Ok);
     } else {
         QMessageBox::information(this, tr("Sorry!"), tr("You lost!"), QMessageBox::Ok);
     }
+    m_winner = -1;
     m_board->clear();
+}
+
+void Dialog::writeData(const QByteArray &data)
+{
+    if (m_socket->state() == QAbstractSocket::ConnectedState) {
+        m_socket->write(encodeInt(data.length()));
+        m_socket->write(data);
+    }
+}
+
+void Dialog::readData()
+{
+    while (true) {
+        if (m_pendingSize == 0) {
+            if (m_socket->bytesAvailable() < 4) {
+                // incomplete header
+                return;
+            }
+            QByteArray sizeArray = m_socket->read(4);
+            m_pendingSize = decodeInt(sizeArray);
+        }
+
+        if (m_socket->bytesAvailable() < m_pendingSize) {
+            return;
+        }
+
+        QByteArray buffer = m_socket->read(m_pendingSize);
+        m_pendingSize = 0;
+        QDataStream in(&buffer, QIODevice::ReadOnly);
+        char *tag;
+        in >> tag;
+        if (!std::strcmp(tag, TAG_WIN)) {
+            int winner;
+            in >> winner;
+            showWinMessage(static_cast<GomokuBoardWidget::Color>(winner));
+            return;
+        }
+        if (!std::strcmp(tag, TAG_BOARD)) {
+            in >> *m_board;
+            m_board->update();
+            switchTurn();
+        }
+    }
+}
+
+QByteArray Dialog::encodeInt(const qint32 &src)
+{
+    QByteArray array;
+    QDataStream out(&array, QIODevice::WriteOnly);
+    out << src;
+    return array;
+}
+
+qint32 Dialog::decodeInt(const QByteArray &src)
+{
+    qint32 result;
+    QDataStream in(src);
+    in >> result;
+    return result;
 }
 
 Dialog::~Dialog()

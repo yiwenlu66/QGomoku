@@ -199,3 +199,19 @@ int GomokuBoardWidget::atIndex(int xIndex, int yIndex)
     }
     return m_data[BOARD_SIZE * yIndex + xIndex];
 }
+
+QDataStream &operator<<(QDataStream &out, const GomokuBoardWidget &board)
+{
+    for (int i = 0; i < GomokuBoardWidget::BOARD_SIZE * GomokuBoardWidget::BOARD_SIZE; ++i) {
+        out << board.m_data[i];
+    }
+    return out;
+}
+
+QDataStream &operator>>(QDataStream &in, GomokuBoardWidget &board)
+{
+    for (int i = 0; i < GomokuBoardWidget::BOARD_SIZE * GomokuBoardWidget::BOARD_SIZE; ++i) {
+        in >> board.m_data[i];
+    }
+    return in;
+}
