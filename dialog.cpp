@@ -41,10 +41,23 @@ void Dialog::connected(QTcpSocket *socket)
     m_socket = socket;
     ui->pushButton_connect->setEnabled(false);
     ui->pushButton_create->setEnabled(false);
-    ui->label_role->setText(tr("You take <b>%1</b>")
+    ui->label_role->setText(tr("You take <b>%1</b>.")
                             .arg((m_role == GomokuBoardWidget::BLACK) ? tr("BLACK") : tr("WHITE")));
+    m_isMyTurn = (m_role == GomokuBoardWidget::BLACK);
+    setTurnText();
 }
 
+void Dialog::switchTurn()
+{
+    m_isMyTurn = !m_isMyTurn;
+    setTurnText();
+}
+
+void Dialog::setTurnText()
+{
+    ui->label_turn->setText(tr("It's <b>%1</b> turn.")
+                            .arg(m_isMyTurn ? tr("YOUR") : tr("OPPONENT's")));
+}
 
 Dialog::~Dialog()
 {

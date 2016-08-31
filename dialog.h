@@ -31,6 +31,9 @@ private:
     QTcpSocket *m_socket;
 
     GomokuBoardWidget::Color m_role;
+    bool m_isMyTurn;
+    void switchTurn();
+    void setTurnText();
 };
 
 #endif // DIALOG_H
