@@ -16,13 +16,16 @@ SOURCES += main.cpp\
         dialog.cpp \
     dialpad.cpp \
     gomokuboardwidget.cpp \
-    createserverdialog.cpp
+    createserverdialog.cpp \
+    connectserverdialog.cpp
 
 HEADERS  += dialog.h \
     dialpad.h \
     gomokuboardwidget.h \
-    createserverdialog.h
+    createserverdialog.h \
+    connectserverdialog.h
 
 FORMS    += dialog.ui \
     dialpad.ui \
-    createserverdialog.ui
+    createserverdialog.ui \
+    connectserverdialog.ui

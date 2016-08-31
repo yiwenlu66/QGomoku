@@ -19,6 +19,7 @@ public:
 
 public slots:
     void showCreateServerDialog();
+    void showConnectServerDialog();
 
 private:
     Ui::Dialog *ui;
