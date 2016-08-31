@@ -4,6 +4,7 @@
 #include <QSizePolicy>
 
 #include "gomokuboardwidget.h"
+#include "createserverdialog.h"
 
 Dialog::Dialog(QWidget *parent) :
     QDialog(parent),
@@ -12,6 +13,14 @@ Dialog::Dialog(QWidget *parent) :
 {
     ui->setupUi(this);
     ui->horizontalLayout->insertWidget(0, m_board, 2);
+
+    connect(ui->pushButton_create, SIGNAL(clicked(bool)), this, SLOT(showCreateServerDialog()));
+}
+
+void Dialog::showCreateServerDialog()
+{
+    CreateServerDialog dlg(this);
+    dlg.exec();
 }
 
 Dialog::~Dialog()
