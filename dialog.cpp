@@ -21,15 +21,30 @@ Dialog::Dialog(QWidget *parent) :
 
 void Dialog::showCreateServerDialog()
 {
+    m_role = GomokuBoardWidget::BLACK;
     CreateServerDialog dlg(this);
+    connect(&dlg, SIGNAL(connected(QTcpSocket*)), this, SLOT(connected(QTcpSocket*)));
     dlg.exec();
 }
 
 void Dialog::showConnectServerDialog()
 {
+    m_role = GomokuBoardWidget::WHITE;
     ConnectServerDialog dlg(this);
+    connect(&dlg, SIGNAL(connected(QTcpSocket*)), this, SLOT(connected(QTcpSocket*)));
     dlg.exec();
 }
+
+void Dialog::connected(QTcpSocket *socket)
+{
+    socket->setParent(this);
+    m_socket = socket;
+    ui->pushButton_connect->setEnabled(false);
+    ui->pushButton_create->setEnabled(false);
+    ui->label_role->setText(tr("You take <b>%1</b>")
+                            .arg((m_role == GomokuBoardWidget::BLACK) ? tr("BLACK") : tr("WHITE")));
+}
+
 
 Dialog::~Dialog()
 {

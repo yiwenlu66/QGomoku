@@ -2,6 +2,7 @@
 #define DIALOG_H
 
 #include <QDialog>
+#include <QtNetwork/QTcpSocket>
 
 #include "gomokuboardwidget.h"
 
@@ -20,11 +21,16 @@ public:
 public slots:
     void showCreateServerDialog();
     void showConnectServerDialog();
+    void connected(QTcpSocket *);
 
 private:
     Ui::Dialog *ui;
 
     GomokuBoardWidget *m_board;
+
+    QTcpSocket *m_socket;
+
+    GomokuBoardWidget::Color m_role;
 };
 
 #endif // DIALOG_H
