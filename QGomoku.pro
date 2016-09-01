@@ -29,3 +29,6 @@ FORMS    += dialog.ui \
     dialpad.ui \
     createserverdialog.ui \
     connectserverdialog.ui
+
+RESOURCES += \
+    res.qrc

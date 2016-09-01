@@ -7,6 +7,7 @@
 #include <QList>
 #include <QDataStream>
 #include <QPoint>
+#include <QStringMatcher>
 
 class GomokuBoardWidget : public QWidget
 {
@@ -76,12 +77,19 @@ private:
     QPoint m_latticePos[BOARD_SIZE * BOARD_SIZE];
     static int sqtDist(const QPoint &p1, const QPoint &p2);
 
+    static constexpr int const DIRECTIONS[4][2] = { { 1, 0 }, { 1, -1 }, { 0, -1 }, { -1, -1 } };
+    static const QList<QStringMatcher> PATTERNS;
+
     /*
      * Check whether the color is winning.
      * The indices indicate where to start the search.
      */
     bool checkWin(Color, int xIndex, int yIndex);
     bool checkWin(Color, int index);
+
+    bool checkForChanceAt(Color color, int index);
+
+    void clearBombs();
 };
 
 /* Serialize/deserialize boards for data transmission */

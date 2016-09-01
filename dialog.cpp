@@ -161,6 +161,8 @@ void Dialog::readData()
             in >> *m_board;
             m_board->update();
             m_clearFlag = false;
+            m_board->checkForChance((m_role == GomokuBoardWidget::BLACK) ?
+                                        GomokuBoardWidget::WHITE : GomokuBoardWidget::BLACK);
             switchTurn();
         }
         delete[] tag;
