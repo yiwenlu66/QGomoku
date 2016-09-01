@@ -23,6 +23,7 @@ Dialog::Dialog(QWidget *parent) :
     ui->setupUi(this);
 
     connect(m_board, SIGNAL(win(GomokuBoardWidget::Color)), this, SLOT(win(GomokuBoardWidget::Color)));
+    connect(m_board, SIGNAL(tie()), this, SLOT(tie()));
     m_board->installEventFilter(this);
     ui->horizontalLayout->insertWidget(0, m_board, 2);
 
@@ -92,10 +93,13 @@ bool Dialog::eventFilter(QObject *, QEvent *event)
             if (m_winner != -1) {
                 QByteArray data;
                 QDataStream out(&data, QIODevice::WriteOnly);
-                GomokuBoardWidget::Color color = static_cast<GomokuBoardWidget::Color>(m_winner);
-                out << TAG_WIN << static_cast<int>(color);
+                out << TAG_WIN << m_winner;
                 writeData(data);
-                showWinMessage(color);
+                if (!m_winner) {
+                    showTieMessage();
+                } else {
+                    showWinMessage(static_cast<GomokuBoardWidget::Color>(m_winner));
+                }
             }
 
             return true;
@@ -109,6 +113,11 @@ void Dialog::win(GomokuBoardWidget::Color color)
     m_winner = static_cast<int>(color);
 }
 
+void Dialog::tie()
+{
+    m_winner = 0;
+}
+
 void Dialog::showWinMessage(GomokuBoardWidget::Color color)
 {
     m_clearFlag = true;
@@ -117,6 +126,17 @@ void Dialog::showWinMessage(GomokuBoardWidget::Color color)
     } else {
         QMessageBox::information(this, tr("Sorry!"), tr("You lost!"), QMessageBox::Ok);
     }
+    m_winner = -1;
+    if (m_clearFlag) {
+        m_clearFlag = false;
+        m_board->clear();
+    }
+}
+
+void Dialog::showTieMessage()
+{
+    m_clearFlag = true;
+    QMessageBox::information(this, tr("Tie!"), tr("Tie!"), QMessageBox::Ok);
     m_winner = -1;
     if (m_clearFlag) {
         m_clearFlag = false;
@@ -156,7 +176,11 @@ void Dialog::readData()
         if (!std::strcmp(tag, TAG_WIN)) {
             int winner;
             in >> winner;
-            showWinMessage(static_cast<GomokuBoardWidget::Color>(winner));
+            if (!winner) {
+                showTieMessage();
+            } else {
+                showWinMessage(static_cast<GomokuBoardWidget::Color>(winner));
+            }
         } else if (!std::strcmp(tag, TAG_BOARD)) {
             in >> *m_board;
             m_board->update();

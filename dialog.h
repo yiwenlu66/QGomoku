@@ -24,6 +24,7 @@ public slots:
     void showConnectServerDialog();
     void connected(QTcpSocket *);
     void win(GomokuBoardWidget::Color);
+    void tie();
     void readData();
 
 protected:
@@ -52,6 +53,7 @@ private:
     bool m_clearFlag = false;
 
     void showWinMessage(GomokuBoardWidget::Color);
+    void showTieMessage();
 };
 
 #endif // DIALOG_H

@@ -56,6 +56,9 @@ bool GomokuBoardWidget::putPieceAtIndex(Color color, int index)
     if (checkWin(color, index)) {
         emit win(color);
     }
+    if (checkTie()) {
+        emit tie();
+    }
     update();
     return true;
 }
@@ -259,6 +262,16 @@ bool GomokuBoardWidget::checkWin(Color color, int x, int y)
     }
 
     return false;
+}
+
+bool GomokuBoardWidget::checkTie()
+{
+    for (int i = 0; i < BOARD_SIZE * BOARD_SIZE; ++i) {
+        if (m_data[i] == 0 || m_data[i] == 3) {
+            return false;
+        }
+    }
+    return true;
 }
 
 int GomokuBoardWidget::atIndex(int xIndex, int yIndex)

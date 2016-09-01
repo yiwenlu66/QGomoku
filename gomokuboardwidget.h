@@ -61,6 +61,7 @@ public slots:
 
 signals:
     void win(GomokuBoardWidget::Color);
+    void tie();
 
 protected:
     void paintEvent(QPaintEvent *event);
@@ -86,6 +87,8 @@ private:
      */
     bool checkWin(Color, int xIndex, int yIndex);
     bool checkWin(Color, int index);
+
+    bool checkTie();
 
     bool checkForChanceAt(Color color, int index);
 
