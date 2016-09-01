@@ -49,6 +49,7 @@ private:
     bool m_isMyTurn = false;
     void switchTurn();
     void setTurnText();
+    bool m_clearFlag = false;
 
     void showWinMessage(GomokuBoardWidget::Color);
 };

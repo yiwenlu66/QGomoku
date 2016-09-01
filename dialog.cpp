@@ -111,13 +111,17 @@ void Dialog::win(GomokuBoardWidget::Color color)
 
 void Dialog::showWinMessage(GomokuBoardWidget::Color color)
 {
+    m_clearFlag = true;
     if (color == m_role) {
         QMessageBox::information(this, tr("Congratulations!"), tr("You won!"), QMessageBox::Ok);
     } else {
         QMessageBox::information(this, tr("Sorry!"), tr("You lost!"), QMessageBox::Ok);
     }
     m_winner = -1;
-    m_board->clear();
+    if (m_clearFlag) {
+        m_clearFlag = false;
+        m_board->clear();
+    }
 }
 
 void Dialog::writeData(const QByteArray &data)
@@ -156,6 +160,7 @@ void Dialog::readData()
         } else if (!std::strcmp(tag, TAG_BOARD)) {
             in >> *m_board;
             m_board->update();
+            m_clearFlag = false;
             switchTurn();
         }
         delete[] tag;
